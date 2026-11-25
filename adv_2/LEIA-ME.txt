@@ -1,0 +1,36 @@
+ADVERTORIAL AEROPLUS — SOMENTE /adv/
+Origem: https://aeroplusoficial.com.br/adv/
+
+COMO PUBLICAR
+Extraia e envie index.html e ac-identify.js juntos para a pasta desejada.
+Imagens, fontes e estilos já estão incorporados no HTML recebido do site.
+A página principal não está incluída.
+
+ALTERAÇÕES DESTA ENTREGA
+Os 3 links com classe checkout_link foram neutralizados com href="#".
+Eles apontavam para https://aeroplusoficial.com.br/?btok=1, a página de
+vendas, e não diretamente para um checkout. Substitua o # pelo novo destino.
+Não havia links diretos de pagamento identificados nesta página.
+O caminho de ac-identify.js foi ajustado para carregar a cópia local,
+sem alterar nenhum byte do código JavaScript.
+
+VERIFICAÇÃO
+Não foram encontrados scripts ativos de UTMify, Google Analytics,
+Taboola ou Facebook/Meta no HTML obtido. Vários blocos script já estavam
+vazios na origem. Nomes de classes e links sociais foram preservados.
+Não foi identificado código de backredirect no HTML e no JavaScript
+obtidos. Esta verificação não inclui configurações internas do servidor.
+
+CÓDIGO ADICIONAL PRESERVADO — DEPENDE DE APROVAÇÃO PARA REMOVER
+ac-identify.js coleta informações técnicas do navegador (tela, idioma,
+fuso horário, plataforma, hardware e sinais de canvas/WebGL), calcula
+uma impressão digital e envia os dados por POST a /api/visit-metadata
+no domínio em que a página estiver hospedada. Pode recarregar a página
+em determinadas respostas do servidor; não intercepta o botão Voltar.
+O serviço de servidor /api/visit-metadata não faz parte deste ZIP.
+Este código foi mantido por estar fora das remoções expressamente pedidas.
+
+PRESERVAÇÃO
+Textos, imagens, estilos, links editoriais, compartilhamento, formulário
+de busca, blocos vazios e demais elementos foram mantidos como recebidos.
+Não foram feitas correções ou remoções adicionais.
