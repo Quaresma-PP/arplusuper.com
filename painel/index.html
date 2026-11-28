@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Painel Primeiro Clique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--ink:#0f1c26;--mute:#5d6b76;--line:#e3e8ec;--acc:#1463ff;--ok:#0f9d58;--bad:#d93025}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif}
+.hide{display:none!important}
+header{background:var(--ink);color:#fff;padding:14px max(4vw,16px);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+header h1{font-size:17px;margin:0;font-weight:600;flex:1}
+header span{font-size:13px;opacity:.7}
+main{padding:20px max(4vw,16px);max-width:1300px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:18px}
+h2{font-size:16px;margin:0 0 12px}
+button,input,select{font:inherit;font-size:15px}
+button{background:var(--acc);color:#fff;border:0;border-radius:8px;padding:10px 16px;cursor:pointer;min-height:42px}
+button.ghost{background:transparent;color:inherit;border:1px solid currentColor;opacity:.85}
+button.chip{background:#fff;color:var(--ink);border:1px solid var(--line)}
+button.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+input{border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-height:42px;background:#fff;color:var(--ink)}
+input:focus,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+#login{max-width:380px;margin:12vh auto}
+#login form{display:grid;gap:12px}
+#login p{color:var(--mute);margin:0 0 6px}
+.err{color:var(--bad);font-size:14px;min-height:20px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.filters label{font-size:13px;color:var(--mute)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:18px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.kpi b{display:block;font-size:clamp(22px,3vw,30px);font-weight:700;line-height:1.2}
+.kpi small{color:var(--mute);font-size:13px}
+.bars{display:grid;gap:6px}
+.bar{display:grid;grid-template-columns:90px 1fr 120px;gap:10px;align-items:center;font-size:13px}
+.bar .t{background:#eef2f6;border-radius:6px;height:22px;position:relative;overflow:hidden}
+.bar .c{position:absolute;inset:0 auto 0 0;background:#9dbcff}
+.bar .v{position:absolute;inset:0 auto 0 0;background:var(--ok)}
+.bar .n{text-align:right;white-space:nowrap;color:var(--mute)}
+.legend{font-size:13px;color:var(--mute);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 4px 0 12px;vertical-align:middle}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:12px;color:var(--mute);font-weight:600;white-space:nowrap;position:sticky;top:0;background:var(--card)}
+td.num,th.num{text-align:right;white-space:nowrap}
+td small{color:var(--mute);display:block}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:99px;background:#eef2f6;white-space:nowrap}
+.tag.ok{background:#e1f5e9;color:#0b7a43}.tag.no{background:#fde8e7;color:#a3261d}
+.empty{color:var(--mute);text-align:center;padding:24px}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px}
+.row h2{margin:0}
+@media(max-width:600px){.bar{grid-template-columns:60px 1fr 88px}table{font-size:13px}}
+</style>
+</head>
+<body>
+
+<section id="login" class="card hide">
+  <h2>Painel Primeiro Clique</h2>
+  <p>Entre com seu e-mail e senha.</p>
+  <form id="fLogin">
+    <input id="email" type="email" placeholder="E-mail" autocomplete="email" required>
+    <input id="senha" type="password" placeholder="Senha" autocomplete="current-password" required>
+    <button type="submit">Entrar</button>
+    <div class="err" id="loginErr"></div>
+  </form>
+</section>
+
+<div id="app" class="hide">
+  <header>
+    <h1>Painel Primeiro Clique</h1>
+    <span id="quem"></span>
+    <button class="ghost" id="sair">Sair</button>
+  </header>
+  <main>
+    <div class="card">
+      <div class="filters">
+        <button class="chip" data-d="0">Hoje</button>
+        <button class="chip" data-d="1">Ontem</button>
+        <button class="chip on" data-d="7">7 dias</button>
+        <button class="chip" data-d="30">30 dias</button>
+        <label>De <input type="date" id="ini"></label>
+        <label>Até <input type="date" id="fim"></label>
+        <button id="atualizar">Atualizar</button>
+      </div>
+      <div class="err" id="appErr"></div>
+    </div>
+
+    <div class="kpis" id="kpis"></div>
+
+    <div class="card">
+      <h2>Por dia</h2>
+      <div class="bars" id="bars"></div>
+      <div class="legend"><i style="background:#9dbcff"></i>Primeiros cliques<i style="background:var(--ok)"></i>Viraram venda</div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <h2>Vendas e de onde vieram</h2>
+        <input id="buscaV" placeholder="Buscar nome, e-mail, campanha…">
+      </div>
+      <div class="scroll"><table>
+        <thead><tr><th>Venda em</th><th>Cliente</th><th class="num">Valor</th><th>Status</th><th>Primeiro clique</th><th>Campanha / Anúncio</th><th class="num">Dias até comprar</th></tr></thead>
+        <tbody id="tVendas"></tbody>
+      </table></div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <h2>Primeiros cliques por campanha e anúncio</h2>
+        <input id="buscaC" placeholder="Buscar campanha, anúncio…">
+      </div>
+      <div class="scroll"><table>
+        <thead><tr><th>Dia</th><th>Origem</th><th>Campanha</th><th>Anúncio</th><th class="num">Visitas</th><th class="num">Primeiros cliques</th><th class="num">Viraram venda</th><th class="num">Faturamento</th><th class="num">Conversão</th></tr></thead>
+        <tbody id="tDiario"></tbody>
+      </table></div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+{
+const SUPABASE_URL = 'https://wyvsgwhfayweohjebpzk.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5dnNnd2hmYXl3ZW9oamVicHprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyMDM0OTMsImV4cCI6MjEwODc3OTQ5M30.dv7vZez1mf4ni3UduCTQbJSoE-Is7JmMWUkjfKVuDTg';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const brl = n => Number(n || 0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+const int = n => Number(n || 0).toLocaleString('pt-BR');
+const pct = (a, b) => b ? (a / b * 100).toLocaleString('pt-BR', {maximumFractionDigits:1}) + '%' : '–';
+const dt = s => s ? new Date(s).toLocaleString('pt-BR', {timeZone:'America/Sao_Paulo', day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) : '';
+const dia = s => { const [y,m,d] = s.split('-'); return d + '/' + m; };
+const hojeSP = (off = 0) => { const d = new Date(Date.now() - off * 864e5); return d.toLocaleDateString('en-CA', {timeZone:'America/Sao_Paulo'}); };
+const NAO_PAGO = ['refunded','reembolsado','chargeback','canceled','cancelado','refused','recusado','pending','pendente','waiting_payment','aguardando'];
+const pago = st => !NAO_PAGO.includes(String(st || '').toLowerCase());
+
+let diario = [], vendas = [];
+
+function periodo(d) {
+  document.querySelectorAll('.chip').forEach(b => b.classList.toggle('on', b.dataset.d == d));
+  if (d == 0) { $('ini').value = $('fim').value = hojeSP(); }
+  else if (d == 1) { $('ini').value = $('fim').value = hojeSP(1); }
+  else { $('ini').value = hojeSP(d - 1); $('fim').value = hojeSP(); }
+}
+
+async function carregar() {
+  $('appErr').textContent = '';
+  const ini = $('ini').value, fim = $('fim').value;
+  const fimMais1 = new Date(new Date(fim + 'T00:00:00-03:00').getTime() + 864e5).toISOString();
+  const iniIso = new Date(ini + 'T00:00:00-03:00').toISOString();
+  const [r1, r2] = await Promise.all([
+    sb.rpc('painel_diario', {inicio: ini, fim: fim}),
+    sb.from('vendas_com_clique').select('*').gte('created_at', iniIso).lt('created_at', fimMais1).order('created_at', {ascending:false}).limit(2000)
+  ]);
+  if (r1.error || r2.error) { $('appErr').textContent = 'Erro ao carregar: ' + (r1.error || r2.error).message; return; }
+  diario = r1.data || []; vendas = r2.data || [];
+  render();
+}
+
+function render() {
+  const visitas = diario.reduce((a, r) => a + +r.visitas, 0);
+  const pcs = diario.reduce((a, r) => a + +r.primeiros_cliques, 0);
+  const pagas = vendas.filter(v => pago(v.status));
+  const comClique = pagas.filter(v => v.primeiro_clique_em);
+  const fat = pagas.reduce((a, v) => a + Number(v.valor || 0), 0);
+  $('kpis').innerHTML = [
+    ['Visitas', int(visitas)],
+    ['Primeiros cliques', int(pcs)],
+    ['Vendas no período', int(pagas.length)],
+    ['Vendas com clique rastreado', int(comClique.length) + ' <small>(' + pct(comClique.length, pagas.length) + ')</small>'],
+    ['Faturamento', brl(fat)],
+  ].map(([l, v]) => '<div class="kpi"><small>' + l + '</small><b>' + v + '</b></div>').join('');
+
+  // barras por dia
+  const porDia = {};
+  diario.forEach(r => { const d = porDia[r.dia] ||= {pc:0, v:0}; d.pc += +r.primeiros_cliques; d.v += +r.vendas; });
+  const dias = Object.keys(porDia).sort().reverse();
+  const max = Math.max(1, ...dias.map(d => porDia[d].pc));
+  $('bars').innerHTML = dias.length ? dias.map(d => {
+    const x = porDia[d];
+    return '<div class="bar"><span>' + dia(d) + '</span><div class="t"><div class="c" style="width:' + (x.pc / max * 100) + '%"></div><div class="v" style="width:' + (x.v / max * 100) + '%"></div></div><span class="n">' + int(x.pc) + ' · ' + int(x.v) + ' venda' + (x.v == 1 ? '' : 's') + '</span></div>';
+  }).join('') : '<div class="empty">Nenhum clique no período.</div>';
+
+  renderVendas(); renderDiario();
+}
+
+function renderVendas() {
+  const q = $('buscaV').value.toLowerCase();
+  const rows = vendas.filter(v => !q || [v.nome, v.email, v.telefone, v.utm_campaign, v.utm_content, v.produto].join(' ').toLowerCase().includes(q));
+  $('tVendas').innerHTML = rows.length ? rows.map(v => {
+    const dias = v.primeiro_clique_em ? Math.max(0, Math.floor((new Date(v.created_at) - new Date(v.primeiro_clique_em)) / 864e5)) : '';
+    return '<tr><td>' + esc(dt(v.created_at)) + '</td>' +
+      '<td>' + esc(v.nome || '–') + '<small>' + esc(v.email || '') + (v.telefone ? ' · ' + esc(v.telefone) : '') + '</small></td>' +
+      '<td class="num">' + (v.valor != null ? brl(v.valor) : '–') + '</td>' +
+      '<td><span class="tag ' + (pago(v.status) ? 'ok' : 'no') + '">' + esc(v.status || '–') + '</span></td>' +
+      '<td>' + (v.primeiro_clique_em ? esc(dt(v.primeiro_clique_em)) : '<span class="tag">sem clique rastreado</span>') + '</td>' +
+      '<td>' + esc(v.utm_campaign || '–') + '<small>' + esc(v.utm_content || '') + (v.utm_source ? ' · ' + esc(v.utm_source) : '') + '</small></td>' +
+      '<td class="num">' + dias + '</td></tr>';
+  }).join('') : '<tr><td colspan="7" class="empty">Nenhuma venda no período.</td></tr>';
+}
+
+function renderDiario() {
+  const q = $('buscaC').value.toLowerCase();
+  const rows = diario.filter(r => !q || [r.utm_source, r.utm_campaign, r.utm_content].join(' ').toLowerCase().includes(q));
+  $('tDiario').innerHTML = rows.length ? rows.map(r =>
+    '<tr><td>' + esc(dia(r.dia)) + '</td><td>' + esc(r.utm_source) + '</td><td>' + esc(r.utm_campaign) + '</td><td>' + esc(r.utm_content) + '</td>' +
+    '<td class="num">' + int(r.visitas) + '</td><td class="num">' + int(r.primeiros_cliques) + '</td><td class="num">' + int(r.vendas) + '</td>' +
+    '<td class="num">' + brl(r.faturamento) + '</td><td class="num">' + pct(+r.vendas, +r.primeiros_cliques) + '</td></tr>'
+  ).join('') : '<tr><td colspan="9" class="empty">Nenhum dado no período.</td></tr>';
+}
+
+async function entrar(session) {
+  if (!session) { $('app').classList.add('hide'); $('login').classList.remove('hide'); return; }
+  const { data: ok } = await sb.rpc('is_painel_admin');
+  if (!ok) { await sb.auth.signOut(); $('loginErr').textContent = 'Esse e-mail não tem acesso ao painel.'; return; }
+  $('quem').textContent = session.user.email;
+  $('login').classList.add('hide'); $('app').classList.remove('hide');
+  carregar();
+}
+
+$('fLogin').addEventListener('submit', async e => {
+  e.preventDefault(); $('loginErr').textContent = '';
+  const { data, error } = await sb.auth.signInWithPassword({ email: $('email').value.trim(), password: $('senha').value });
+  if (error) { $('loginErr').textContent = 'E-mail ou senha incorretos.'; return; }
+  entrar(data.session);
+});
+$('sair').addEventListener('click', async () => { await sb.auth.signOut(); location.reload(); });
+document.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => { periodo(+b.dataset.d); carregar(); }));
+$('atualizar').addEventListener('click', () => { document.querySelectorAll('.chip').forEach(b => b.classList.remove('on')); carregar(); });
+$('buscaV').addEventListener('input', renderVendas);
+$('buscaC').addEventListener('input', renderDiario);
+setInterval(() => { if (!$('app').classList.contains('hide')) carregar(); }, 120000);
+
+periodo(7);
+sb.auth.getSession().then(({ data }) => entrar(data.session));
+}
+</script>
+</body>
+</html>
